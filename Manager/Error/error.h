@@ -1,0 +1,5 @@
+
+
+
+
+#define ERROR_MODE_INCORRECT "E-00"
