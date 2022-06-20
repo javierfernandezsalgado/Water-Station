@@ -75,3 +75,15 @@ main ()
       }
     }
 }
+
+static read_sensors()
+{
+
+  while (true)
+    {
+      float temperature_water = getTemperature();
+      log_info("Temperature: ");
+      log_info(temperature_water);
+      delay(2000);
+    }
+}
