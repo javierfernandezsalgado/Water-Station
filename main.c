@@ -82,8 +82,13 @@ static read_sensors()
   while (true)
     {
       float temperature_water = getTemperature();
+      float tds_water = get_TDS_value ();
       log_info("Temperature: ");
       log_info(temperature_water);
+
+      log_info("TDS: ");
+      log_info(tds_water);
+
       delay(2000);
     }
 }
