@@ -44,11 +44,12 @@ typedef enum
 
 typedef struct
 {
+  bool_t is_configure_before;
   //mode the system is working.
   system_mode sm;
   //After setup device during on the initialization a delay of time is perfomed
   uint32_t setup_delay;
-  configuration_bank   select_configuration;  
+  //configuration_bank   select_configuration;  
   wifi_configuration   wifi_parameters; 
   ph_configuration     ph_parameters;
   gns_configuration    gns_parameters;
@@ -62,11 +63,11 @@ typedef struct
 {
    //http_port_hi
   uint16_t http_port;
-  uint8_t ssid_configuration[]="Fishery-station-1";
-  uint8_t ssid_passwd_configuration[]="123456789";
+  uint8_t ssid_configuration[256u];
+  uint8_t ssid_passwd_configuration[125u]=;
   uint8_t ssid_nominal[125u];
   uint8_t ssid_passwd_nominal[256u];
-  uint8_t ip_address_configuration[]="192.168.1.1";
+  uint8_t ip_address_configuration[17u];
 
 }wifi_configuration;
   
@@ -80,6 +81,7 @@ typedef struct
 }ph_configuration;
 typedef struct
 {
+  uint8_t pin=0u;
 }gns_configuration;
 
 typedef struct
@@ -112,20 +114,9 @@ typedef struct
 /*Power FDIR is hardcoded, users cannot configured*/
 typdef struct 
 {
-  fdir_entry power_max={
-    .type_action=POWEROFF;
-    .action=&poweroff;
-    .value=2.0f;
-    .eval=&lt;
-  };
-  fdir_entry power_min=
-  {
-    .type_action=POWEROFF;
-    .action=&poweroff;
-    .value=4.0f;
-    .eval=&gt;
-  };
-  float power_max=4.0f;
+  fdir_entry power_max;
+  fdir_entry power_min;
+ 
 }power_fdir_conf;
 
 /*PH FDIR ENTRY*/
