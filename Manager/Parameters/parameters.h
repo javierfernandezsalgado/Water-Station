@@ -55,6 +55,7 @@ typedef struct
   gns_configuration    gns_parameters;
   power_configuration  power_parameters;
   fdir_configuration   fdir_parameters;
+  event_configuration  event_parameters;
   temp_configuration   temp_parameters;
   uint16_t crc;
   }global_configuration;
@@ -91,7 +92,7 @@ typedef struct
 
 
 
-/*-----------------Configuration FDIR---------------------------*/
+/*-----------------Configuration FDIR and Events---------------------------*/
 
 /*Type of FDIR*/
 typedef enum
@@ -124,35 +125,42 @@ typedef
 {
   fdir_entry max_ph;
   fdir_entry min_ph;
-}ph_fdir_conf;
+}ph_event_conf;
 
 /*Temperature fdir*/
 typedef 
 {
   fdir_entry max_temp;
   fdir_entry min_temp;
-}temp_fdir_conf;
+}temp_event_conf;
 
 /*Temperature wifi*/
 typedef 
 {
-  //Wifi TBD
+  fdir_entry .no_connection;
+  fdir_entry .poor_connection;
+  fdir_entry .too_many_connections;
 }wifi_fdir_conf;
 
 /*FDIR Configuration*/
 typedef
 {
   wifi_fdir_conf wifi_fdir;
-  temp_fdir_conf temp_fdir;
-  ph_fdir_conf   ph_fdir;
   power_fdir_conf power_fdir;
 }fdir_configuration;
+
+
+typedef
+{
+    temp_event_conf temp_event;
+    ph_event_conf   ph_event;
+  
+} event_configuration;
 
 
 
 
 extern void initialization();
-
 extern void * get_parameter(parameter_bank banck);
 extern void  set_parameter(parameter_bank banck,void * configuration);
 
