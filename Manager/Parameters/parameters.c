@@ -98,14 +98,15 @@ extern void initialization()
 
 extern bool_t gt(float param1,float param2)
 {
+return param1>param2;
 }
-extern bool_t lt(float param,float param2)
+extern bool_t lt(float param1,float param2)
 {
-
+return param1<param2;
 }
-extern bool_t eq(float param,float param2)
+extern bool_t eq(float param1,float param2)
 {
-
+return param1==param2;
 }
 
 extern void poweroff(const uint8_t * message)
