@@ -1,5 +1,6 @@
 #include <Preferences.h>
-
+#include "./parameters.h"
+#include "../../"
 static Preferences prefs;
 
 
@@ -12,8 +13,11 @@ static global_configuration parameters[2u];
 extern void initialization()
 {
   #ifdef preload_parameters
+  log_info("Preload parameter");
+
   prefs.begin("parameters");
-  
+
+  log_info("Factory load");
   parameters[configuration_banck.FACTORY_CONFIGURATION]=
   {
     .is_configure_before=true;
@@ -45,19 +49,7 @@ extern void initialization()
     };
     .fdir_parameters
     {
-      .wifi_fdir=
-      {
-        
-      };
-      .temp_fdir=
-      {
-      
-      };
-      .ph_fdir=
-      {
-      
-      };
-      .power_fdir=
+          .power_fdir=
       {
           .power_max={
             .type_action=POWEROFF;
@@ -74,26 +66,17 @@ extern void initialization()
             };
       };
     };
-    
-  
+
   };
-  prefs.putBytes("parameters", parameters, sizeof(parameters));
+ memcpy( parameters[configuration_banck.USER_CONFIGURATION],parameters[configuration_banck.FACTORY_CONFIGURATION],sizeof(parameters[configuration_banck.FACTORY_CONFIGURATION])];
+ prefs.putBytes("parameters", parameters, sizeof(parameters));
   
   #else
-  
+    log_info("Retriving the values from the flash");
+    prefs.getBytes("parameters", parameters, sizeof (parameters));
   #endif
-  prefs.begin("isFirstTime");
-  prefs.begin("parameters");
-  uint8_t isFirtsTime = prefs.getBytes("isFirstTime");
-  
-  prefs.begin("isFirstTime");
-  
-  
-  prefs.putBytes("schedule", content, sizeof(content));
-  
-  EEPROM.get(configuration_banck.FACTORY_CONFIGURATION, parameters[configuration_banck.FACTORY_CONFIGURATION]);
-  EEPROM.get(configuration_banck.USER_CONFIGURATION, parameters[configuration_banck.FACTORY_CONFIGURATION]);
-}
+  //Parameters initialized.
+
 }
 
 extern bool_t gt(float param1,float param2)

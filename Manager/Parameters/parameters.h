@@ -109,37 +109,39 @@ typedef struct
   action_fdir type_action;
   void (*action) (const uint8_t *);
   float value;
-  bool_t (*eval)(float); 
-}fdir_entry;
+  bool_t (*eval)(float);
+  uint32_t  period;
+  bool_t    isActived;
+}fdir_event_entry;
 
 /*Power FDIR is hardcoded, users cannot configured*/
 typdef struct 
 {
-  fdir_entry power_max;
-  fdir_entry power_min;
+  fdir_event_entry power_max;
+  fdir_event_entry power_min;
  
 }power_fdir_conf;
 
 /*PH FDIR ENTRY*/
 typedef 
 {
-  fdir_entry max_ph;
-  fdir_entry min_ph;
+  fdir_event_entry max_ph;
+  fdir_event_entry min_ph;
 }ph_event_conf;
 
 /*Temperature fdir*/
 typedef 
 {
-  fdir_entry max_temp;
-  fdir_entry min_temp;
+  fdir_event_entry max_temp;
+  fdir_event_entry min_temp;
 }temp_event_conf;
 
 /*Temperature wifi*/
 typedef 
 {
-  fdir_entry .no_connection;
-  fdir_entry .poor_connection;
-  fdir_entry .too_many_connections;
+  fdir_event_entry .no_connection;
+  fdir_event_entry .poor_connection;
+  fdir_event_entry .too_many_connections;
 }wifi_fdir_conf;
 
 /*FDIR Configuration*/
