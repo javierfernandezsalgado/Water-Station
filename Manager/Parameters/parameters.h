@@ -21,10 +21,12 @@ typedef enum {
   POWER,
   WIFI,
   FDIR_GLOBAL,
-  FDIR_TEMPERATURE,
+  EVENT_TEMPERATURE,
   FDIR_POWER,
-  FDIR_PH,
-  FDIR_GNS
+    FDIR_WIFI,
+  EVENT_PH,
+  EVENT_GLOBAL,
+  EVENT_PPM
 } parameter_bank;
 
 /*Global configuration */
@@ -115,7 +117,7 @@ typedef struct
 }fdir_event_entry;
 
 /*Power FDIR is hardcoded, users cannot configured*/
-typdef struct 
+typedef struct
 {
   fdir_event_entry power_max;
   fdir_event_entry power_min;
@@ -123,49 +125,75 @@ typdef struct
 }power_fdir_conf;
 
 /*PH FDIR ENTRY*/
-typedef 
+typedef struct
 {
   fdir_event_entry max_ph;
   fdir_event_entry min_ph;
 }ph_event_conf;
 
 /*Temperature fdir*/
-typedef 
+typedef struct
 {
   fdir_event_entry max_temp;
   fdir_event_entry min_temp;
 }temp_event_conf;
 
 /*Temperature wifi*/
-typedef 
+typedef struct
 {
-  fdir_event_entry .no_connection;
-  fdir_event_entry .poor_connection;
-  fdir_event_entry .too_many_connections;
+  fdir_event_entry no_connection;
+  fdir_event_entry poor_connection;
+  fdir_event_entry too_many_connections;
 }wifi_fdir_conf;
 
 /*FDIR Configuration*/
-typedef
+typedef struct
 {
   wifi_fdir_conf wifi_fdir;
   power_fdir_conf power_fdir;
 }fdir_configuration;
 
+typedef struct
+{
+    fdir_event_entry max_ppm;
+    fdir_event_entry min_ppm;
 
-typedef
+
+}ppm_event;
+
+typedef struct
 {
     temp_event_conf temp_event;
     ph_event_conf   ph_event;
+    ppm_event_conf   ppm_event;
   
 } event_configuration;
 
+typedef enum
+{
+    TEMPERATURE,
+    PH,
+    POWER,
+    USER_CONNECTIONS,
+    PPM,
+    WIFI_CONECTION_DB
 
+}aquisition_enum;
 
+typedef struct{
+    float temperature=0.0f;
+    float ph=0.0f;
+    float power=0.0f;
+    uint8_t users_connections=0u;
+    float ppm=0.0f;
+    float wifi_connection_db=0.0f;
+}adquisition_datas;
 
 extern void initialization();
 extern void * get_parameter(parameter_bank banck);
 extern void  set_parameter(parameter_bank banck,void * configuration);
 
+extern void * get_adquisition(aquisition_enum acq);
 
 
 
