@@ -335,7 +335,7 @@ extern void * get_adquisition(void * data,aquisition_enum acq_type)
             return &acq_datas.ph;
             break;
         case POWER:
-            return &acq_datas.power=(float);
+            return &acq_datas.power;
         default:
             assert(false);
             return NULL;
