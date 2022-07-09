@@ -10,33 +10,23 @@ static fdir_event_entry * events [MAX_EVENT_ELEMENTS];
 static uint32_t events_seconds [MAX_EVENT_ELEMENTS];
 
 
-/* typedef struct */
-/* { */
-/*   fdir_event_entry * entry; */
-/*   uint8_t counter_seconds; */
-/* } node_event; */
-
-
 extern void  nominal_mode(void)
 {
   //Configure some tables
 
   //FDIR
-
   fdir_configuration * fdir_conf = get_parameter(parameter_bank.FDIR_GLOBAL);
-
   memcpy(fdir,&fdir_conf->wifi_fdir,sizeof(fdir_conf->wifi_fdir));
-  fdir_conf->power_fdir
+  memcpy(fdir+sizeof(fdir_conf->wifi_fdir),&fdir_conf->power_fdir,sizeof(fdir_conf->power_fdir));
 
-
+  //EVENT
   event_configuration * event_conf = get_parameter(parameter_bank.EVENT_GLOBAL);
-
-
-
+  memcpy(events,&event_conf->temp_event_fdir,sizeof(event_conf->temp_event));
+  memcpy(events+sizeof(event_conf->temp_event),&event_conf->ph_event_fdir,sizeof(event_conf->ph_event));
+  memcpy(events+sizeof(event_conf->temp_event)+sizeof(event_conf->ph_event),&event_conf->ppm_event,sizeof(event_conf->ppm_event));
 
 
   //start the tasks
-
   //CORE 1
   xTaskCreatePinnedToCore(
                           task_website_monitoring, /* Function to implement the task */
@@ -65,7 +55,6 @@ extern void  nominal_mode(void)
                           5,  /* Priority of the task */
                           &task_event,  /* Task handle. */
                           0); /* Core where the task should run */
-
 
   xTaskCreatePinnedToCore(
                           task_read_sensors, /* Function to implement the task */
