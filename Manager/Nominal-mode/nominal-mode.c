@@ -1,13 +1,42 @@
+#include <stdint.h>
+#include <std_bool.h>
+#include <Manager/Parameters/parameters.h>
+#include <log.c/src/log.h>
+//TODO include tasks free RTOS?
+
+/* Max number of FDIR element */
 #define MAX_FDIR_ELEMENTS 5u
+
+/* MAx number of event */
 #define MAX_EVENT_ELEMENTS 6u
 
+/* Number of user connected to the website. */
 static uint32_t user_connections=0u;
 
+/* FDIR configuration elements. nominal_mode read the configuration from the parameters module. */
 static fdir_event_entry * fdir [MAX_FDIR_ELEMENTS];
+
+/* It contains the reamining seconds to be executed the verification of a FDIR mechanism. */
 static uint32_t fdir_seconds [MAX_FDIR_ELEMENTS];
 
+/* It contains in seconds the events which are retrieved from the parameter module in nominal_mode  */
 static fdir_event_entry * events [MAX_EVENT_ELEMENTS];
+
+/* It contains the remaining seconds to be checked and event. */
 static uint32_t events_seconds [MAX_EVENT_ELEMENTS];
+
+
+/* It is charge yo handle the website with the needed information. It implements the methods get and post */
+static void task_website_monitoring(void);
+
+/* It is in charge to handle the execution of the fdir mechanism. Reads the FDIR configuration and execute the methods configured as well. The minimun execution is 1000 ms and the meaximum execution ids the MCD of the FDIR mechanism. */
+static void task_fdir(void);
+
+/* It is in charge to handle the events. Read the configuration and set up the next the event to be handle. */
+static void task_event(void);
+
+/* It is in charge to read the sensors every 1000 ms. The values are colleceted in the adquitions module. */
+static void task_read_sensors(void);
 
 
 extern void  nominal_mode(void)
@@ -68,7 +97,7 @@ extern void  nominal_mode(void)
 }
 
 
-static void task_website_monitoring()
+static void task_website_monitoring(void)
 {
 
   while(true)
@@ -79,9 +108,9 @@ static void task_website_monitoring()
     }
 }
 
-static void task_fdir()
+static void task_fdir(void)
 {
-  //TODO initilizate the fdir_event_entry table
+  //DONE initilizate the fdir_event_entry table
 
   static uint32_t elapse_seconds;
 
@@ -136,9 +165,9 @@ static void task_fdir()
 
 }
 
-static void task_event()
+static void task_event(void)
 {
-  //TODO Initializate the fdir_event_entry table;
+  //DONE Initializate the fdir_event_entry table;
   log_info("task events_activated");
 
   static uint32_t elapse_seconds;
@@ -193,7 +222,7 @@ static void task_event()
 
 }
 
-static void task_read_sensors()
+static void task_read_sensors(void)
 {
 
   //read temperature
