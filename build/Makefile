@@ -1,5 +1,5 @@
 COMPILER:=
-SRCS:=
+SRCS:=$(shell find ../ -name "*.c" )
 OBJS:=
 
 

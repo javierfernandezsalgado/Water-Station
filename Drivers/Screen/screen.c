@@ -20,7 +20,7 @@ extern void screen_setup(void)
 }
 
 
-extern print_screen(uint8_t *  msg, uint8_t line, uint8_t character)
+extern void print_screen(uint8_t *  msg, uint8_t line)
 {
   assert(msg<(NUMBER_CHARACTERS-1u));
   assert(line<(NUMBER_LINES-1u));
