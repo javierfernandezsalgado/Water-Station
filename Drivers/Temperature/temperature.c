@@ -1,6 +1,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
+/* Number of hte PIN connect ot hte temperature  of the sensor */
 const int oneWireBus = 5;
 
 // Setup a oneWire instance to communicate with any OneWire devices

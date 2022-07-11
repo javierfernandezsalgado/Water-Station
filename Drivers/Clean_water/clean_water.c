@@ -1,36 +1,48 @@
 
 #include <stdint.h>
 
-
+/* TDS Sensor's PIN */
 #define TdsSensorPin A0
+
+/* Vref connected */
 #define VREF 3.3              // analog reference voltage(Volt) of the ADC
+
+/* Number of samples to have in consideration to make an average */
 #define SCOUNT  30            // sum of sample point
+
 
 static int32_t analogBuffer[SCOUNT];     // store the analog value in the array, read from ADC
 static int32_t analogBufferTemp[SCOUNT];
+/* Index of values save it */
 static int32_t analogBufferIndex = 0;
+/* Inde value temp */
 static int32_t copyIndex = 0;
 
-static int getMedianNum(int32_t bArray[], int32_t iFilterLen);
+/* Get he median of the SCOUNT values */
+/* @Param: bArray: list of values */
+/* @Param: iFilterLen: Number of values */
 
-static int getMedianNum(int bArray[], int iFilterLen){
+static uint32_t getMedianNum(int32_t bArray[], int32_t iFilterLen);
+
+
+static uint32_t getMedianNum(int bArray[], int iFilterLen){
   int bTab[iFilterLen];
   int i, j, bTemp;
   for (byte i = 0; i<iFilterLen; i++)
     {
-    bTab[i] = bArray[i];
+      bTab[i] = bArray[i];
     }
   for (j = 0; j < iFilterLen - 1; j++)
     {
-    for (i = 0; i < iFilterLen - j - 1; i++)
-      {
-      if (bTab[i] > bTab[i + 1])
+      for (i = 0; i < iFilterLen - j - 1; i++)
         {
-        bTemp = bTab[i];
-        bTab[i] = bTab[i + 1];
-        bTab[i + 1] = bTemp;
+          if (bTab[i] > bTab[i + 1])
+            {
+              bTemp = bTab[i];
+              bTab[i] = bTab[i + 1];
+              bTab[i + 1] = bTemp;
+            }
         }
-      }
     }
   if ((iFilterLen & 1) > 0)
     {
@@ -43,7 +55,9 @@ static int getMedianNum(int bArray[], int iFilterLen){
   return bTemp;
 }
 
-extern get_TDS_value(void)
+/* Get hte values of the TDS in a median of 800 milliseconds */
+
+extern float get_TDS_value(void)
 {
   uint64_t analogSampleTimepoint = millis();
   unsigned long printTimepoint = millis();

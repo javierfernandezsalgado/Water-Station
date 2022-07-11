@@ -110,7 +110,8 @@ typedef struct
 {
   action_fdir type_action;
   void (*action) (const uint8_t *);
-  float value;
+  float value_reference;
+  aquisition_enum adquisition_id;
   bool_t (*eval)(float);
   uint32_t  period;
   bool_t    isActived;
