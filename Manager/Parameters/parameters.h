@@ -44,6 +44,28 @@ typedef enum
   USER_CONFIGURATION
 }configuration_banck;
 
+
+/*FDIR entry*/
+typedef struct
+{
+    action_fdir type_action;
+    void (*action) (const uint8_t *);
+    float value;
+    bool_t (*eval)(float);
+    uint32_t  period;
+    bool_t    isActived;
+}fdir_event_entry;
+
+typedef struct
+{
+    temp_event_conf temp_event;
+    ph_event_conf   ph_event;
+    ppm_event_conf   ppm_event;
+
+} event_configuration;
+
+
+
 typedef struct
 {
   bool_t is_configure_before;
@@ -51,8 +73,8 @@ typedef struct
   system_mode sm;
   //After setup device during on the initialization a delay of time is perfomed
   uint32_t setup_delay;
-  //configuration_bank   select_configuration;  
-  wifi_configuration   wifi_parameters; 
+  //configuration_bank   select_configuration;
+  wifi_configuration   wifi_parameters;
   ph_configuration     ph_parameters;
   gns_configuration    gns_parameters;
   power_configuration  power_parameters;
@@ -67,13 +89,13 @@ typedef struct
    //http_port_hi
   uint16_t http_port;
   uint8_t ssid_configuration[256u];
-  uint8_t ssid_passwd_configuration[125u]=;
+    uint8_t ssid_passwd_configuration[125u]=;
   uint8_t ssid_nominal[125u];
   uint8_t ssid_passwd_nominal[256u];
   uint8_t ip_address_configuration[17u];
 
 }wifi_configuration;
-  
+
 typedef struct
 {
   uint8_t pin=5u;
@@ -102,26 +124,17 @@ typedef enum
   NONE_ACTION,
   INFO,
   RESET,
-  POWEROFF   
+  POWEROFF
 }action_fdir;
 
-/*FDIR entry*/ 
-typedef struct
-{
-  action_fdir type_action;
-  void (*action) (const uint8_t *);
-  float value;
-  bool_t (*eval)(float);
-  uint32_t  period;
-  bool_t    isActived;
-}fdir_event_entry;
+
 
 /*Power FDIR is hardcoded, users cannot configured*/
 typedef struct
 {
   fdir_event_entry power_max;
   fdir_event_entry power_min;
- 
+
 }power_fdir_conf;
 
 /*PH FDIR ENTRY*/
@@ -161,13 +174,6 @@ typedef struct
 
 }ppm_event;
 
-typedef struct
-{
-    temp_event_conf temp_event;
-    ph_event_conf   ph_event;
-    ppm_event_conf   ppm_event;
-  
-} event_configuration;
 
 typedef enum
 {
@@ -194,9 +200,3 @@ extern void * get_parameter(parameter_bank banck);
 extern void  set_parameter(parameter_bank banck,void * configuration);
 
 extern void * get_adquisition(aquisition_enum acq);
-
-
-
-
-
-
