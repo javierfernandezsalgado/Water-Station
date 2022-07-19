@@ -50,4 +50,5 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-*~undo-tree~
+*~undo-tree~8
+./ws/build/*

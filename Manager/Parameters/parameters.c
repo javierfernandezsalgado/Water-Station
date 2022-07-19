@@ -1,8 +1,9 @@
 #include <Preferences.h>
-#include "./parameters.h"
-#include "../../"
-static Preferences prefs;
+#include <Manager/Parameters/parameters.h>
+#include <log.c/src/log.h>
 
+
+static Preferences prefs;
 
 static system_mode system_mode;
 static configuration_banck select_banck=configuration_banck.USER_CONFIGURATION;
@@ -256,16 +257,16 @@ extern void  set_parameter(parameter_bank banck,void * configuration)
 {
     switch (banck) {
         case GLOBAL:
-        {
             memcpy(parameters[select_banck],configuration,sizeof (parameters[select_banck]));
-            break;
-        }
-        case TEMPERATURE:
-        {
-            memcpy(parameters[select_banck].temp_parameters,configuration,sizeof(parameters[select_banck].temp_parameters));
-            break
-        }
-        case PH:
+            {
+                break;
+            }
+    case TEMPERATURE:
+    {
+        memcpy(parameters[select_banck].temp_parameters,configuration,sizeof(parameters[select_banck].temp_parameters));
+        break
+            }
+case PH:
         {
             memcpy(parameters[select_banck].ph_parameters,configuration,sizeof (parameters[select_banck].ph_parameters));
         }
@@ -315,8 +316,8 @@ extern void  set_parameter(parameter_bank banck,void * configuration)
             return NULL;
         }
     }
-    assert (false);
-    return NULL;
+    //Copying the paramters in the flash memory
+    prefs.putBytes("parameters", parameters, sizeof(parameters));
 
 }
 
