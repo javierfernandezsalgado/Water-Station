@@ -7,6 +7,7 @@
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "freertos/semphr.h"
 
 #include "esp_system.h"
 #include "nvs_flash.h"
@@ -27,6 +28,11 @@ static nvs_handle_t nvs_handle_parameter;
 static const char* TAG = "Parameter Module";
 
 
+SemaphoreHandle_t mutex_acq;
+
+
+
+
 static void load_init_factory_values()
 {
     ESP_LOGI(TAG, "Preload parameter");
@@ -41,10 +47,12 @@ static void load_init_factory_values()
             .wifi_parameters={
                 .http_port=80,
                 .ssid_configuration="Fishery-station-1",
-                .ssid_passwd_configuration="123456789",
+                .ssid_passwd_configuration="",
+                .max_connection_configuration=3u,
+                .wifi_channel_configuration=1u,
                 .ssid_nominal="",
                 .ssid_passwd_nominal="",
-                .ip_address_configuration="192.168.1.1",
+                .ip_address_configuration={192,168,1,1},
             },
             .ph_parameters =
             {
@@ -65,51 +73,56 @@ static void load_init_factory_values()
             .fdir_parameters =
             {
                 .power_fdir=
-                    {
-                        .power_max={
-                            .type_action=POWEROFF,
-                            .action=&poweroff,
-                            .value=4.0f,
-                            .eval=&lt,
-                        },
-                        .power_min=
-                        {
-                            .type_action=POWEROFF,
-                            .action=&poweroff,
-                            .value=4.0f,
-                            .eval=&gt,
-                        },
+                {
+                    .power_max={
+                        .type_action=INFO,
+                        .action=&poweroff,
+                        .value=4.0f,
+                        .eval=lt,
+                        .operator=LT,
                     },
+                    .power_min=
+                    {
+                        .type_action=INFO,
+                        .action=&poweroff,
+                        .value=4.0f,
+                        .eval=gt,
+                        .operator=GT,
+                    },
+                },
                 .wifi_fdir =
                 {
-                     .no_connection=
-                         {
-                             .type_action=INFO,
-                             .action=NULL,
-                             .value=true,
-                             .eval=&gt,
-                             .period=0u,
-                             .isActived=false,
-                         },
-                         .poor_connection =
-                          {
-                              .type_action=INFO,
-                              .action=NULL,
-                              .value=20u,
-                              .eval=&gt,
-                              .period=0u,
-                              .isActived=false,
-                          },
-                     .too_many_connections=
-                     {
-                         .type_action=INFO,
-                         .action=NULL,
-                         .value=10u,
-                         .eval=&gt,
-                         .period=0u,
-                         .isActived=false,
-                     },
-                 },
+                    .no_connection=
+                    {
+                        .type_action=INFO,
+                        .action=NULL,
+                        .value=true,
+                        .eval=gt,
+                        .operator=GT,
+                        .period=0u,
+                        .isActived=false,
+                    },
+                    .poor_connection =
+                    {
+                        .type_action=INFO,
+                        .action=NULL,
+                        .value=20u,
+                        .eval=gt,
+                        .operator=GT,
+                        .period=0u,
+                        .isActived=false,
+                    },
+                    .too_many_connections=
+                    {
+                        .type_action=INFO,
+                        .action=NULL,
+                        .value=10u,
+                        .eval=gt,
+                        .operator=GT,
+                        .period=0u,
+                        .isActived=false,
+                    },
+                },
 
             },
             .event_parameters=
@@ -121,7 +134,8 @@ static void load_init_factory_values()
                         .type_action=INFO,
                         .action=NULL,
                         .value=25u,
-                        .eval=&gt,
+                        .eval=gt,
+                        .operator=GT,
                         .period=60u,
                         .isActived=true,
 
@@ -131,7 +145,8 @@ static void load_init_factory_values()
                         .type_action=INFO,
                         .action=NULL,
                         .value=5u,
-                        .eval=&lt,
+                        .eval=lt,
+                        .operator=LT,
                         .period=60u,
                         .isActived=true,
 
@@ -144,7 +159,8 @@ static void load_init_factory_values()
                         .type_action=INFO,
                         .action=NULL,
                         .value=8u,
-                        .eval=&gt,
+                        .eval=gt,
+                        .operator=GT,
                         .period=60u,
                         .isActived=false,
 
@@ -154,16 +170,41 @@ static void load_init_factory_values()
                         .type_action=INFO,
                         .action=NULL,
                         .value=3u,
-                        .eval=&lt,
+                        .eval=lt,
+                        .operator=LT,
                         .period=60u,
                         .isActived=true,
                     },
                 },
+                .ppm_event=
+                {
+                    .max_ppm=
+                    {
+                        .type_action=INFO,
+                        .action=NULL,
+                        .value=8u,
+                        .eval=gt,
+                        .operator=GT,
+                        .period=60u,
+                        .isActived=false,
 
+                    },
+                    .min_ppm=
+                    {
+                        .type_action=INFO,
+                        .action=NULL,
+                        .value=3u,
+                        .eval=lt,
+                        .operator=LT,
+                        .period=60u,
+                        .isActived=true,
+                    },
+                },
             },
-
         };
-    memcpy( &parameters[USER_CONFIGURATION],&parameters[FACTORY_CONFIGURATION],sizeof(parameters[FACTORY_CONFIGURATION]));
+    ESP_LOGI(TAG,"Copying a total of %d bytes from factory parameters to user configuration parameters ",sizeof(parameters[FACTORY_CONFIGURATION]));
+
+    memcpy( &parameters[USER_CONFIGURATION],&parameters[FACTORY_CONFIGURATION],sizeof(global_configuration));
 
 }
 
@@ -173,6 +214,9 @@ extern void initialization()
     size_t required_size = 0;
     int32_t init_flash=1;
 
+    mutex_acq = xSemaphoreCreateMutex();
+
+    ESP_ERROR_CHECK(nvs_flash_init());
 
     err = nvs_open(STORAGE_NAMESPACE, NVS_READWRITE, &nvs_handle_parameter);
 
@@ -185,32 +229,44 @@ extern void initialization()
 
 
     err = nvs_get_i32(nvs_handle_parameter, "init_flash", &init_flash);
-    if (err !=ESP_OK)
-    {
-        assert(false);
-    }
 
-    if (err != ESP_ERR_NVS_NOT_FOUND)
+
+
+    if (err == ESP_ERR_NVS_NOT_FOUND)
     {
         load_init_factory_values();
-        err = nvs_set_blob(nvs_handle_parameter, "parameters", parameters, sizeof(parameters));
+        err = nvs_set_blob(nvs_handle_parameter, "parameters", parameters, sizeof(global_configuration)*2);
         err = nvs_set_i32(nvs_handle_parameter, "init_flash", init_flash);
+
     }
+
     else
     {
-        err = nvs_get_blob(nvs_handle_parameter, "parameter", parameters, &required_size);
-        if (err != ESP_OK && err != ESP_ERR_NVS_NOT_FOUND)
+        required_size=sizeof(global_configuration)*2;
+        err = nvs_get_blob(nvs_handle_parameter, "parameters", parameters, &required_size);
+
+        if(required_size!=sizeof(global_configuration)*2)
         {
+            //It must be updated the flash values / rese
+            ESP_LOGI(TAG,"Reseting the user values in flash memory ");
+            load_init_factory_values();
+            err = nvs_set_blob(nvs_handle_parameter, "parameters", parameters, sizeof(global_configuration)*2);
+
+            err = nvs_set_i32(nvs_handle_parameter, "init_flash", init_flash);
+
+        }
+        //vTaskDelay(2000/ portTICK_PERIOD_MS);
+        ESP_LOGI(TAG,"Copying a total of %d bytes from flash memory to RAM ",required_size);
+        if (err != ESP_OK )
+        {
+            ESP_LOGI(TAG,"Error: %d ",err);
             assert(false);
         }
 
     }
 
-//err = nvs_set_blob(nvs_handle, "parameters", parameters, sizeof(parameters));
 
-
-
-    ESP_LOGI(TAG, "Retriving the values from the flash");
+    ESP_LOGI(TAG, "Retrieved the values from the flash");
 }
 
 extern bool gt(float param1,float param2)
@@ -227,6 +283,11 @@ extern bool eq(float param1,float param2)
 }
 //see this info https://www.techtonions.com/esp32-sending-alert-message-to-whatsapp/
 extern void poweroff(const uint8_t * message)
+{
+    esp_restart();
+}
+
+extern void reset(const uint8_t * message)
 {
     esp_restart();
 }
@@ -310,13 +371,13 @@ extern void * get_parameter(parameter_bank banck)
 extern void  set_parameter(parameter_bank banck,void * configuration)
 {
     esp_err_t err;
-    size_t required_size = 0;
+
 
     switch (banck) {
     case GLOBAL:
     {
-        memcpy(&parameters[select_banck],configuration,sizeof (parameters[select_banck]));
 
+        memcpy(&parameters[select_banck],configuration,sizeof (global_configuration));
         break;
     }
     case TEMPERATURE:
@@ -387,60 +448,99 @@ extern void  set_parameter(parameter_bank banck,void * configuration)
     }
     //Copying the paramters in the flash memory
 
-    err = nvs_get_blob(nvs_handle_parameter, "parameter", parameters, &required_size);
+    err = nvs_set_blob(nvs_handle_parameter, "parameters", parameters, sizeof(global_configuration)*2);
+
+
     if (err!=ESP_OK)
     {
+        ESP_LOGI(TAG,"Parameter has been set in the flash memory");
         assert(false);
     }
+    ESP_LOGI(TAG,"Parameter has been set in the flash memory");
 
 }
 
-extern void * get_adquisition(void * data,aquisition_enum acq_type)
+extern void * get_adquisition(aquisition_enum acq_type)
 {
-    switch (acq_type) {
-    case PPM_ACQ:
-        return &acq_datas.ppm;
-    case USER_CONNECTIONS_ACQ:
-        return &acq_datas.users_connections;
-    case WIFI_CONECTION_DB_ACQ:
-        return &acq_datas.wifi_connection_db;
-    case TEMPERATURE_ACQ:
-        return &acq_datas.temperature;
-    case PH_ACQ:
-        return &acq_datas.ph;
-    case POWER_ACQ:
-        return &acq_datas.power;
-    default:
-        assert(false);
-        return NULL;
+    void * aux;
+    if( xSemaphoreTake( mutex_acq, ( TickType_t ) 10000 ) == pdTRUE )
+    {
+        switch (acq_type) {
+        case PPM_ACQ:
+            aux= (void *)  &acq_datas.ppm;
+            break;
+        case USER_CONNECTIONS_ACQ:
+            aux= (void *) &acq_datas.users_connections;
+            break;
+        case WIFI_CONECTION_DB_ACQ:
+            aux= (void *) &acq_datas.wifi_connection_db;
+            break;
+        case TEMPERATURE_ACQ:
+            aux= (void *) &acq_datas.temperature;
+            break;
+        case PH_ACQ:
+            aux= (void *) &acq_datas.ph;
+            break;
+        case POWER_ACQ:
+            aux= (void *) &acq_datas.power;
+            break;
+        default:
+            assert(false);
+            break;
+        }
     }
-    assert(false);
-    return NULL;
+    else{
+        /*Too much time block*/
+        assert(false);
+    }
+    xSemaphoreGive( mutex_acq );
+    return aux;
 }
 
 extern void set_aquition(void * data,aquisition_enum acq_type)
 {
-    switch (acq_type) {
-    case PPM_ACQ:
-        acq_datas.ppm=*((float *)data);
-        break;
-    case USER_CONNECTIONS_ACQ:
-        acq_datas.users_connections=*((uint8_t *)data);
-        break;
-    case WIFI_CONECTION_DB_ACQ:
-        acq_datas.wifi_connection_db=*((float *)data);
-        break;
-    case TEMPERATURE_ACQ:
-        acq_datas.temperature=*((float *)data);
-        break;
-    case PH_ACQ:
-        acq_datas.ph=*((float *) data);
-        break;
-    case POWER_ACQ:
-        acq_datas.power=*((float *) data);
-        break;
-    default:
-        assert(false);
-        break;
+    if( xSemaphoreTake( mutex_acq, ( TickType_t ) 10000 ) == pdTRUE )
+    {
+
+        switch (acq_type) {
+        case PPM_ACQ:
+            acq_datas.ppm=*((float *)data);
+            break;
+        case USER_CONNECTIONS_ACQ:
+            acq_datas.users_connections=*((uint8_t *)data);
+            break;
+        case WIFI_CONECTION_DB_ACQ:
+            acq_datas.wifi_connection_db=*((float *)data);
+            break;
+        case TEMPERATURE_ACQ:
+            acq_datas.temperature=*((float *)data);
+            break;
+        case PH_ACQ:
+            acq_datas.ph=*((float *) data);
+            break;
+        case POWER_ACQ:
+            acq_datas.power=*((float *) data);
+            break;
+        default:
+            assert(false);
+            break;
+        }
     }
+    else{
+        /*Too much time block*/
+        assert(false);
+    }
+    xSemaphoreGive( mutex_acq );
+}
+
+extern void   reset_factory(void)
+{
+
+
+    int32_t init_flash=1;
+    esp_err_t err;
+    load_init_factory_values();
+    err = nvs_set_blob(nvs_handle_parameter, "parameters", parameters, sizeof(global_configuration)*2);
+    err = nvs_set_i32(nvs_handle_parameter, "init_flash", init_flash);
+
 }

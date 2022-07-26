@@ -1,5 +1,8 @@
 #ifndef PARAMETER_H
 #define PARAMETER_H
+
+
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdbool.h>
@@ -25,7 +28,7 @@ typedef enum {
   FDIR_GLOBAL,
   EVENT_TEMPERATURE,
   FDIR_POWER,
-    FDIR_WIFI,
+  FDIR_WIFI,
   EVENT_PH,
   EVENT_GLOBAL,
   EVENT_PPM
@@ -46,6 +49,17 @@ typedef enum
   USER_CONFIGURATION
 }configuration_banck;
 
+typedef enum
+{
+    TEMPERATURE_ACQ,
+    PH_ACQ,
+    POWER_ACQ,
+    USER_CONNECTIONS_ACQ,
+    PPM_ACQ,
+    WIFI_CONECTION_DB_ACQ
+
+}aquisition_enum;
+
 
 /*Type of FDIR*/
 typedef enum
@@ -56,14 +70,24 @@ typedef enum
     POWEROFF
 }action_fdir;
 
-
+typedef enum
+{
+    LT,
+    GT,
+    EQ
+}operator_compare;
 /*FDIR entry*/
 typedef struct
 {
     action_fdir type_action;
     void (*action) (const uint8_t *);
+
     float value;
+
+    operator_compare operator;
     bool (*eval)(float,float);
+
+    aquisition_enum adquisition_id;
     uint32_t  period;
     bool    isActived;
 }fdir_event_entry;
@@ -84,9 +108,12 @@ typedef struct
     uint16_t http_port;
     uint8_t ssid_configuration[256u];
     uint8_t ssid_passwd_configuration[125u];
-    uint8_t ssid_nominal[125u];
-    uint8_t ssid_passwd_nominal[256u];
-    uint8_t ip_address_configuration[17u];
+    uint32_t max_connection_configuration;
+    uint32_t wifi_channel_configuration;
+    uint8_t ssid_nominal[256u];
+    uint8_t ssid_passwd_nominal[125u];
+    uint8_t ip_address_configuration[4u];
+
 
 }wifi_configuration;
 
@@ -177,8 +204,8 @@ typedef struct
     //mode the system is working.
   system_mode sm;
   //After setup device during on the initialization a delay of time is perfomed
-  uint32_t setup_delay;
-  //configuration_bank   select_configuration;
+    uint32_t setup_delay; // never used
+    //configuration_bank   select_configuration;
   wifi_configuration   wifi_parameters;
   ph_configuration     ph_parameters;
   gns_configuration    gns_parameters;
@@ -186,7 +213,7 @@ typedef struct
   fdir_configuration   fdir_parameters;
     event_configuration  event_parameters;
     temp_configuration   temp_parameters;
-  uint16_t crc;
+    uint16_t crc;
   }global_configuration;
 
 
@@ -195,16 +222,6 @@ typedef struct
 
 
 
-typedef enum
-{
-    TEMPERATURE_ACQ,
-    PH_ACQ,
-    POWER_ACQ,
-    USER_CONNECTIONS_ACQ,
-    PPM_ACQ,
-    WIFI_CONECTION_DB_ACQ
-
-}aquisition_enum;
 
 
 
@@ -218,9 +235,12 @@ typedef struct{
     float wifi_connection_db;
 }adquisition_datas;
 
-extern void initialization();
+extern void   initialization();
 extern void * get_parameter(parameter_bank banck);
-extern void  set_parameter(parameter_bank banck,void * configuration);
+extern void   set_parameter(parameter_bank banck,void * configuration);
+extern void   reset_factory(void);
 
-extern void * get_adquisition(void * data,aquisition_enum acq_type);
+extern void * get_adquisition(aquisition_enum acq_type);
+extern void   set_aquition(void * data,aquisition_enum acq_type);
+extern void   reset_adquistion(void);
 #endif
