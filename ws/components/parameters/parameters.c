@@ -316,6 +316,10 @@ extern void * get_parameter(parameter_bank banck)
     {
         return  (void *) &parameters[select_banck].ph_parameters;
     }
+    case PPM:
+    {
+        return  (void *) &parameters[select_banck].ppm_parameters;
+    }
     case GNS:
     {
         return (void *) &parameters[select_banck].gns_parameters;
@@ -390,6 +394,12 @@ extern void  set_parameter(parameter_bank banck,void * configuration)
         memcpy(&parameters[select_banck].ph_parameters,configuration,sizeof (parameters[select_banck].ph_parameters));
         break;
     }
+    case PPM:
+    {
+        memcpy(&parameters[select_banck].ppm_parameters,configuration,sizeof (parameters[select_banck].ppm_parameters));
+        break;
+    }
+
     case GNS:
     {
         memcpy(&parameters[select_banck].gns_parameters,configuration,sizeof(parameters[select_banck].gns_parameters) );

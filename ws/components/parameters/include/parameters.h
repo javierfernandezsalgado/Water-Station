@@ -26,6 +26,7 @@ typedef enum {
   POWER,
   WIFI,
   FDIR_GLOBAL,
+  PPM,
   EVENT_TEMPERATURE,
   FDIR_POWER,
   FDIR_WIFI,
@@ -130,6 +131,11 @@ typedef struct
 typedef struct
 {
     uint8_t pin;
+}ppm_configuration;
+
+typedef struct
+{
+    uint8_t pin;
 }gns_configuration;
 
 typedef struct
@@ -206,9 +212,10 @@ typedef struct
   //After setup device during on the initialization a delay of time is perfomed
     uint32_t setup_delay; // never used
     //configuration_bank   select_configuration;
-  wifi_configuration   wifi_parameters;
-  ph_configuration     ph_parameters;
-  gns_configuration    gns_parameters;
+    wifi_configuration   wifi_parameters;
+    ph_configuration     ph_parameters;
+    ppm_configuration     ppm_parameters;
+    gns_configuration    gns_parameters;
     power_configuration  power_parameters;
   fdir_configuration   fdir_parameters;
     event_configuration  event_parameters;

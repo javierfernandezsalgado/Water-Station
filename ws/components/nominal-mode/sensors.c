@@ -5,6 +5,9 @@
 #include "esp_log.h"
 #include "sensors.h"
 #include "parameters.h"
+#include "temperature.h"
+#include "ph.h"
+#include "clean_water.h"
 
 #define TAG "SENSORS"
 
@@ -17,13 +20,13 @@ extern void task_read_sensors(void * pvParameters)
     {
         ESP_LOGI(TAG,"Reading temperature");
         float temperature=0.0f;
-        //getTemperature();
+        temperature=getTemperature();
         set_aquition((void *)&temperature,TEMPERATURE_ACQ);
 
         //read ph
         ESP_LOGI(TAG,"Reading PH");
         float ph=0.0f;
-        //get_ph(void);
+        ph=get_ph();
         set_aquition((void *)&ph,PH_ACQ);
 
         ESP_LOGI(TAG,"Reading Power");
@@ -36,7 +39,7 @@ extern void task_read_sensors(void * pvParameters)
 
         ESP_LOGI(TAG,"Reading TDS");
         float tds=0.0f;
-        //=  get_TDS_value();
+        tds=get_TDS_value();
         set_aquition((void *)&tds,PPM_ACQ);
 
         //TODO the WIFI connection DB, the quality of the signal

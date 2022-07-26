@@ -1,24 +1,35 @@
-//#include <OneWire.h>
-//#include <DallasTemperature.h>
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "string.h"
+#include "esp_system.h"
+#include "nvs_flash.h"
+#include "ds18b20.h" //Include library
+#include "parameters.h"
+#include <stdbool.h>
 
-/* Number of hte PIN connect ot hte temperature  of the sensor */
-const int oneWireBus = 5;
 
-// Setup a oneWire instance to communicate with any OneWire devices
-//OneWire oneWire(oneWireBus);
 
-// Pass our oneWire reference to Dallas Temperature sensor
-//DallasTemperature sensors(&oneWire);
+DeviceAddress tempSensor;
+
+
 
 extern float getTemperature(void) {
     //sensors.requestTemperatures();
     //return sensors.getTempCByIndex(0);
-    return 0.0f;
+
+
+    ds18b20_requestTemperatures();
+
+    return ds18b20_getTempC((DeviceAddress *)&tempSensor);
+
 }
 
 
 extern void temperature_setup(void)
 {
-    //sensors.begin();
+    ds18b20_init(((temp_configuration *)get_parameter(TEMPERATURE))->pin);
+    search(tempSensor,false);
+    ds18b20_setResolution(&tempSensor,1,10);
 
 }

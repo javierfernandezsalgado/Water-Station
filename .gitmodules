@@ -7,3 +7,6 @@
 [submodule "Test/cmock"]
 	path = Test/cmock
 	url = https://github.com/throwtheswitch/cmock.git
+[submodule "ws/components/ds18b20"]
+	path = ws/components/ds18b20
+	url = https://github.com/feelfreelinux/ds18b20.git

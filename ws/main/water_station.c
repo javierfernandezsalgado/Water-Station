@@ -6,6 +6,9 @@
 #include "freertos/task.h"
 #include "esp_log.h"
 #include "nominal-mode.h"
+#include "temperature.h"
+#include "ph.h"
+#include "clean_water.h"
 
 static const char* TAG = "Main module";
 
@@ -18,13 +21,13 @@ static void driver_initilization()
     //screen_setup();
 
     ESP_LOGI(TAG,"ph set up ");
-    //ph_setup();
+    ph_setup();
 
     ESP_LOGI(TAG,"temperature set up ");
-    //temperature_setup();
+    temperature_setup();
 
     ESP_LOGI(TAG,"clean water set up ");
-    //clean_water_setup();
+    clean_water_setup();
 
     ESP_LOGI(TAG,"Internal temperature set up ");
     //internal_temperature_setup();
