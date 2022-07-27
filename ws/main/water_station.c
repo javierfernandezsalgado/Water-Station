@@ -9,6 +9,7 @@
 #include "temperature.h"
 #include "ph.h"
 #include "clean_water.h"
+#include "internal_temperature.h"
 
 static const char* TAG = "Main module";
 
@@ -17,8 +18,6 @@ static void driver_initilization()
     //Driver configuration
     ESP_LOGI(TAG,"Setup Init ");
 
-    ESP_LOGI(TAG,"Screen set up ");
-    //screen_setup();
 
     ESP_LOGI(TAG,"ph set up ");
     ph_setup();
@@ -30,7 +29,8 @@ static void driver_initilization()
     clean_water_setup();
 
     ESP_LOGI(TAG,"Internal temperature set up ");
-    //internal_temperature_setup();
+    internal_temperature_set_up();
+
 
     ESP_LOGI(TAG,"Setup finish ");
 

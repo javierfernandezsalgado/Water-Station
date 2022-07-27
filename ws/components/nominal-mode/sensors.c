@@ -8,7 +8,7 @@
 #include "temperature.h"
 #include "ph.h"
 #include "clean_water.h"
-
+#include "internal_temperature.h"
 #define TAG "SENSORS"
 
 /* It is in charge to read the sensors every 1000 ms. The values are colleceted in the adquitions module. */
@@ -41,6 +41,11 @@ extern void task_read_sensors(void * pvParameters)
         float tds=0.0f;
         tds=get_TDS_value();
         set_aquition((void *)&tds,PPM_ACQ);
+
+        ESP_LOGI(TAG,"Reading internal temp");
+        float internal_temp=0.0f;
+        internal_temp=internal_temperature_get();
+        set_aquition((void *)&internal_temp,INTERNAL_TEMP_ACQ);
 
         //TODO the WIFI connection DB, the quality of the signal
 

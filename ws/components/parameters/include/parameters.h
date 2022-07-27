@@ -57,7 +57,8 @@ typedef enum
     POWER_ACQ,
     USER_CONNECTIONS_ACQ,
     PPM_ACQ,
-    WIFI_CONECTION_DB_ACQ
+    WIFI_CONECTION_DB_ACQ,
+    INTERNAL_TEMP_ACQ
 
 }aquisition_enum;
 
