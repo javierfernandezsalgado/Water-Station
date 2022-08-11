@@ -68,7 +68,7 @@ static void load_init_factory_values()
             },
             .temp_parameters =
             {
-                .pin =0u,
+                .pin =4u,
             },
             .fdir_parameters =
             {

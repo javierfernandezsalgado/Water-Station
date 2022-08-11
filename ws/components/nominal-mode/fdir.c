@@ -91,9 +91,6 @@ extern void  fdir_initialization()
 }
 extern void task_fdir(void * pvParameters)
 {
-    //DONE initilizate the fdir_event_entry table
-
-
 
     while(true)
     {
