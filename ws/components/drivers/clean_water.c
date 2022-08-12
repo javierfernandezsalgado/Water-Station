@@ -6,7 +6,7 @@
 #include "parameters.h"
 #include "esp_log.h"
 //Reading voltage on ADC1 channel 0 (GPIO 36):
-
+/*INFO: It has been inspared from the https://randomnerdtutorials.com/arduino-tds-water-quality-sensor/*/
 
 #define TAG "PPM"
 
@@ -25,7 +25,6 @@ extern float get_TDS_value(void)
     float averageVoltage = 0;
     float tdsValue = 0;
     float temperature = (*(float *)get_adquisition(TEMPERATURE_ACQ));       // current temperature for compensation
-    temperature = 25.0f;
     ESP_LOGI(TAG,"Temperature for calibrate the PH is %0.2f",temperature);
     float compensationCoefficient;
     float compensationVoltage;
@@ -34,7 +33,6 @@ extern float get_TDS_value(void)
 
 
     averageVoltage = ppm * (float)VREF / 1024.0;
-
 
     //temperature compensation formula: fFinalResult(25^C) = fFinalResult(current)/(1.0+0.02*(fTP-25.0));
     compensationCoefficient = 1.0+0.02*(temperature-25.0);
@@ -49,7 +47,6 @@ extern float get_TDS_value(void)
 
 extern void  clean_water_setup(void)
 {
-
-    adc1_config_width(ADC_WIDTH_BIT_12);
+    adc1_config_width(ADC_WIDTH_BIT_10);
     adc1_config_channel_atten(ADC1_CHANNEL_6,ADC_ATTEN_DB_0);
 }

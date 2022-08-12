@@ -114,7 +114,7 @@ extern uint32_t fdir_task_body(void)
         if (fdir[i].isActived)
         {
             fdir_seconds[i]= fdir_seconds[i] - elapse_seconds;
-            ESP_LOGI(TAG,"Fdir number %d is activated, remaining seconds: %d",i,fdir_seconds[i]);
+            ESP_LOGI(TAG,"Fdir number %u is activated, remaining seconds: %lu",i,fdir_seconds[i]);
             if (fdir_seconds[i]!=0 &&fdir_seconds[i]<min_next_elapse_time)
             {
                 min_next_elapse_time = fdir_seconds[i];
@@ -128,8 +128,8 @@ extern uint32_t fdir_task_body(void)
                 fdir_seconds[i]=fdir[i].period;
                 bool (*eval)(float,float)=fdir[i].eval;
                 adquisition=(float) (*(float *)get_adquisition(fdir[i].adquisition_id));
-                ESP_LOGI(TAG,"Adquisition value of %d value: %.6f",fdir[i].adquisition_id,adquisition);
-                ESP_LOGI(TAG,"Address of the eval function %x Function:gt: %x, lt:%x and eq:%x",*eval,gt,lt,eq);
+                ESP_LOGI(TAG,"Adquisition value of %u value: %.6f",fdir[i].adquisition_id,adquisition);
+                ESP_LOGI(TAG,"Address of the eval function %x Function:gt: %x, lt:%x and eq:%x",(unsigned int)*eval,(unsigned int)gt,(unsigned int)lt,(unsigned int)eq);
                 if ((*eval)(adquisition,fdir[i].value))
                 {
                     ESP_LOGI(TAG,"Event is true");

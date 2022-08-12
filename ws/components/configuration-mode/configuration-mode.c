@@ -264,8 +264,8 @@ static void configure_wifi()
         ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
         ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &wifi_config));
         ESP_ERROR_CHECK(esp_wifi_start());
-        ESP_LOGI(TAG,"Max connection %d",wifi_conf->max_connection_configuration);
-        ESP_LOGI(TAG, "wifi_init_softap finished. SSID:%c password:%c channel:%d",
-                 wifi_config.ap.ssid,wifi_config.ap.password, wifi_conf->wifi_channel_configuration);
+        ESP_LOGI(TAG,"Max connection %lu",wifi_conf->max_connection_configuration);
+        ESP_LOGI(TAG, "wifi_init_softap finished. SSID:%c password:%c channel:%lu",
+                 *wifi_config.ap.ssid,*wifi_config.ap.password, wifi_conf->wifi_channel_configuration);
 
 }

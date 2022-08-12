@@ -107,12 +107,12 @@ extern uint32_t event_task_body()
         {
 
             events_seconds[i]= events_seconds[i] - elapse_seconds;
-            ESP_LOGI(TAG,"Event number %d is activated, remaining seconds: %d",i,events_seconds[i]);
+            ESP_LOGI(TAG,"Event number %u is activated, remaining seconds: %lu",i,events_seconds[i]);
 
             if (events_seconds[i]!=0 && events_seconds[i]<min_next_elapse_time)
             {
                 min_next_elapse_time = events_seconds[i];
-                ESP_LOGI(TAG,"Minimum Elapse time for events %d",min_next_elapse_time);
+                ESP_LOGI(TAG,"Minimum Elapse time for events %lu",min_next_elapse_time);
             }
             else
             {
@@ -123,8 +123,8 @@ extern uint32_t event_task_body()
                 events_seconds[i]=events[i].period;
                 bool (*eval)(float,float)=events[i].eval;
                 adquisition=(float) (*(float *)get_adquisition(events[i].adquisition_id));
-                ESP_LOGI(TAG,"Adquisition value of %d value: %.6f",events[i].adquisition_id,adquisition);
-                ESP_LOGI(TAG,"Address of the eval function %x Function:gt: %x, lt:%x and eq:%x",*eval,gt,lt,eq);
+                ESP_LOGI(TAG,"Adquisition value of %u value: %.6f",events[i].adquisition_id,adquisition);
+                ESP_LOGI(TAG,"Address of the eval function %x Function:gt: %x, lt:%x and eq:%x",(unsigned int)*eval,(unsigned int)gt,(unsigned int)lt,(unsigned int)eq);
                 if ((*eval)(adquisition,events[i].value))
                 {
                     ESP_LOGI(TAG,"Event is true");

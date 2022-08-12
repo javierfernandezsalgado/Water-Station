@@ -17,7 +17,7 @@ extern float get_ph (void)
     float ppm;
 
     ESP_LOGI(TAG,"Voltage of the PPM is %d",voltage);
-    ppm = voltage  *(3.3/4095.0);
+    ppm = voltage  *(3.3/1024.0);
 
 
 
@@ -27,6 +27,8 @@ extern float get_ph (void)
 extern void ph_setup(void)
 {
 
-    adc1_config_width(ADC_WIDTH_BIT_12);
+    adc1_config_width(ADC_WIDTH_BIT_10);
+
+/*TODO Calibration has not been performed*/
     adc1_config_channel_atten(ADC1_CHANNEL_7,ADC_ATTEN_DB_0);
 }

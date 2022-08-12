@@ -27,7 +27,7 @@ TEST_CASE("temperature_get","[drivers]")
     {
         temp =  getTemperature();
         ESP_LOGI(TAG,"Value of the temperature are: %0.2f",temp);
-        //comTEST_ASSERT_EQUAL(true,20<temp && temp <50);
+        comTEST_ASSERT_EQUAL(true,10<temp && temp <50);
         vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 

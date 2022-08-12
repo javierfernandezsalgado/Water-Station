@@ -31,7 +31,7 @@ extern void temperature_setup(void)
     ds18b20_init(GPIO_NUM_13);
 
     search(tempSensor,false);
-    ESP_LOGI(TAG,"The ID of the temperature sensor are %d.",tempSensor);
+    ESP_LOGI(TAG,"The ID of the temperature sensor are %c.",*tempSensor);
     ds18b20_setResolution(&tempSensor,1,10);
 
 }
