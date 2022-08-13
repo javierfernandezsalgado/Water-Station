@@ -15,7 +15,6 @@ clean: FORCE
 	-source /opt/esp/esp/esp/esp-idf/export.sh && idf.py fullclean
 test_clean: FORCE
 	-source /opt/esp/esp/esp/esp-idf/export.sh && cd test &&  idf.py fullclean
-
 menu_config: FORCE
 	-source /opt/esp/esp/esp/esp-idf/export.sh && cd test &&  idf.py menuconfig
 version: FORCE
