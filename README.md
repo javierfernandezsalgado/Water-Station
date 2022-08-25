@@ -2,3 +2,5 @@
 Water Station
 
 Example
+
+It has been added sonarcloud
