@@ -1,6 +1,6 @@
 #ifndef PARAMETER_H
 #define PARAMETER_H
-
+/* TODO Sensors must have values to calibrate and correct, they are currently magic numbers in the drivers */
 
 
 #include <stdint.h>
@@ -32,7 +32,8 @@ typedef enum {
   FDIR_WIFI,
   EVENT_PH,
   EVENT_GLOBAL,
-  EVENT_PPM
+  EVENT_PPM,
+  CALIBRATION
 } parameter_bank;
 
 /*Global configuration */
@@ -170,13 +171,7 @@ typedef struct
 
 
 
-typedef struct
-{
-    fdir_event_entry max_ppm;
-    fdir_event_entry min_ppm;
 
-
-}ppm_event;
 
 /*PH FDIR ENTRY*/
 typedef struct
@@ -207,21 +202,22 @@ typedef struct
 
 typedef struct
 {
-    bool is_configure_before;
+  bool is_configure_before;
     //mode the system is working.
   system_mode sm;
   //After setup device during on the initialization a delay of time is perfomed
-    uint32_t setup_delay; // never used
+  uint32_t setup_delay; // never used
     //configuration_bank   select_configuration;
-    wifi_configuration   wifi_parameters;
-    ph_configuration     ph_parameters;
-    ppm_configuration     ppm_parameters;
-    gns_configuration    gns_parameters;
-    power_configuration  power_parameters;
+  wifi_configuration   wifi_parameters;
+  ph_configuration     ph_parameters;
+  ppm_configuration     ppm_parameters;
+  gns_configuration    gns_parameters;
+  power_configuration  power_parameters;
   fdir_configuration   fdir_parameters;
-    event_configuration  event_parameters;
-    temp_configuration   temp_parameters;
-    uint16_t crc;
+  event_configuration  event_parameters;
+  temp_configuration   temp_parameters;
+  uint16_t crc;
+  calibration_datas calibration;
   }global_configuration;
 
 
@@ -229,6 +225,12 @@ typedef struct
 /*-----------------Configuration FDIR and Events---------------------------*/
 
 
+
+typedef struct{
+  float ph;
+  float temp;
+  float ppm;
+} calibration_datas;
 
 
 

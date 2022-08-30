@@ -360,6 +360,10 @@ extern void * get_parameter(parameter_bank banck)
     {
         return (void *) &parameters[select_banck].event_parameters.ppm_event;
     }
+    case CALIBRATION:
+      {
+        return (void *) &parameters[select_banck].event_parameters.calibration;
+      }
     default:
     {
         assert(false);
@@ -450,6 +454,12 @@ extern void  set_parameter(parameter_bank banck,void * configuration)
         memcpy(&parameters[select_banck].event_parameters.ppm_event,configuration,sizeof (parameters[select_banck].event_parameters.ppm_event));
         break;
     }
+    case CALIBRATION:
+      {
+        memcpy(&parameters[select_banck].calibration,configuration,sizeof (parameters[select_banck].calibration));
+        break;
+      }
+
     default:
     {
         assert(false);

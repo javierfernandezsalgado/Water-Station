@@ -17,11 +17,11 @@ DeviceAddress tempSensor;
 extern float getTemperature(void) {
     //sensors.requestTemperatures();
     //return sensors.getTempCByIndex(0);
-
+  float temp_calibration=(*((calibration_datas *)get_parameter(CALIBRATION))->temp);
 
     ds18b20_requestTemperatures();
 
-    return ds18b20_getTempC((DeviceAddress *)&tempSensor);
+    return ds18b20_getTempC((DeviceAddress *)&tempSensor)*temp_calibration;
 
 }
 

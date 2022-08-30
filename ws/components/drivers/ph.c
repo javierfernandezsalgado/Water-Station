@@ -13,10 +13,11 @@ extern float get_ph (void)
 {
 
     int voltage = adc1_get_raw(ADC1_CHANNEL_0);
-    float ppm;
+    float ph;
+    float calibration_ph=float tds_calibration=(*((calibration_datas *)get_parameter(CALIBRATION))->ph);
 
-    ppm = voltage  *(3.3/4095.0);
-    return ppm;
+    ph = voltage  *(3.3/4095.0);
+    return ph*calibration_ph;
 }
 
 extern void ph_setup(void)

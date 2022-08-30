@@ -26,6 +26,8 @@ extern float get_TDS_value(void)
     float temperature = (*(float *)get_adquisition(TEMPERATURE_ACQ));       // current temperature for compensation
     float compensationCoefficient;
     float compensationVoltage;
+    float tds_calibration=(*((calibration_datas *)get_parameter(CALIBRATION))->ppm);
+
 
     int ppm = adc1_get_raw(ADC1_CHANNEL_0);
 
@@ -38,14 +40,14 @@ extern float get_TDS_value(void)
     compensationVoltage=averageVoltage/compensationCoefficient;
 
     //convert voltage value to tds value
-    tdsValue=(133.42*compensationVoltage*compensationVoltage*compensationVoltage - 255.86*compensationVoltage*compensationVoltage + 857.39*compensationVoltage)*0.5;
-
-    return tdsValue;
+    tdsValue=(133.42*compensationVoltage*compensationVoltage*compensationVoltaged
+              - 255.86*compensationVoltage*compensationVoltage + 857.39*compensationVoltage)*0.5;
+    return tdsValue*tds_calibration;
 }
 
 extern void  clean_water_setup(void)
 {
 
-    adc1_config_width(ADC_WIDTH_BIT_12);
+    adc1_config_width(ADC_WIDTH_BIT_10);
     adc1_config_channel_atten(ADC1_CHANNEL_0,ADC_ATTEN_DB_0);
 }
