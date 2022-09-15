@@ -5,8 +5,8 @@
 #include "freertos/task.h"
 
 /* It is charge yo handle the website with the needed information. It implements the methods get and post */
-extern void task_website_monitoring(void * pvParameters);
-
+extern void task_website_send_adquisition_datas(void * pvParameters);
+extern void task_website_synch_parameters(void * pvParameters);
 
 
 #endif

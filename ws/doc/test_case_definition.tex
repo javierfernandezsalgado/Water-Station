@@ -1,0 +1,40 @@
+\section{TEST-01}
+1. Preload in the Flahs memory with configuration mode seletected.
+2. with another device connect to the WIFI provided by \bf{WATER-STATION}.
+3. Set up a right SSID and PASSWORD of a WIFI network with capability of INTERNET.
+4. Open the \bf{WATER-MONITOR} and check that \bf{WATER-STATION} is connected. (PFC)
+\section {TEST-02}
+1. Open the \bf{WATER-MONITOR}
+2. check that the values of the adquistion are provided. (PFC)
+3. open admin panel of the \bf{WATER-STATION} and update a parameter.
+4. Check the status parameter change from NON-SYNCH to SYNCH.(PFC)
+5. Configure a Event rule with the temperature to be trigger.
+6. Check the action is triggered.(PFC)
+7. Configure the FDIR Temperature and set up a rule to reboot system.
+8. Check in \bf{WATER-MONONITORIN} a reboot.
+
+\section {TEST-03}
+1. Open \bf{WATER-MONITORING} in monitoring view.
+2. Reboot the \bf{WATER-STATION}
+3. Check the BOOT Software and ASW information  (PFC)
+\section {TEST-04}
+1. Open \bf {WATER-MONITORING}.
+2. Select view ADMIN.
+3. Update a parameters.
+4. Check the status parameter to SYNCH
+5. Reboot the \bf{WATER-STATION}
+6. Check the values is the same as the configured before. (Keep in mind potential false positive after the system is rebooted. When the system is rebooted the values of the parameter is the same a CRC must be check to check if the datas are consistend.
+7. Select log view
+8. check that it was not update from WATER-MONITOR to WATER-STATION.
+\section {TEST-05}
+1. Open the software flash memory.
+2. Execute the app.
+3. open WATER-MONITOR
+4. select view LOG
+5. check a incosistency of memory parameter and an update from the WATER-MONITOR to WATER-STATION
+\section {TEST-06}
+1. Open WATER-MONITOR.
+2. Set up a FDIR rule with can be triggered
+3. open view LOG
+4. Check a reboot of the system
+

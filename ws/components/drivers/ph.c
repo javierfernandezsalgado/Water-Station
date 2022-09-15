@@ -17,7 +17,7 @@ extern float get_ph (void)
     float calibration_ph=float tds_calibration=(*((calibration_datas *)get_parameter(CALIBRATION))->ph);
 
     ph = voltage  *(3.3/4095.0);
-    return ph*calibration_ph;
+    return (ph*calibration_ph);
 }
 
 extern void ph_setup(void)

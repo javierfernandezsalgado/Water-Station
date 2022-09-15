@@ -162,6 +162,20 @@ static void http_send_values(void)
 }
 
 
+extern void task_website_synch_parameters(void * pvParameters)
+{
+  //TODO check if there are new parameters in the server, and then synchronized.
+  //TODO it checks the time when the parameters in the server was synchronized.
+  while (true)
+    {
+      //TODO if  check values
+
+      //TODO get datas and apply modificaton
+      //TODO force a reboot?
+
+    }
+}
+
 
 extern void task_website_monitoring(void * pvParameters)
 {

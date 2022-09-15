@@ -42,7 +42,7 @@ extern float get_TDS_value(void)
     //convert voltage value to tds value
     tdsValue=(133.42*compensationVoltage*compensationVoltage*compensationVoltaged
               - 255.86*compensationVoltage*compensationVoltage + 857.39*compensationVoltage)*0.5;
-    return tdsValue*tds_calibration;
+    return (tdsValue*tds_calibration);
 }
 
 extern void  clean_water_setup(void)

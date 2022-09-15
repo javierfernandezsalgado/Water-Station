@@ -32,46 +32,55 @@ static TaskHandle_t xHandle_read_sensor = NULL;
 
 extern void  nominal_mode(void)
 {
-    fdir_initialization();
-    event_initilization();
+  fdir_initialization();
+  event_initilization();
 
-    //start the tasks
-    //CORE 1
-    xTaskCreatePinnedToCore(
-        task_website_monitoring, /* Function to implement the task */
-        "Website_monitoring", /* Name of the task */
-        10000,  /* Stack size in words */
-        NULL,  /* Task input parameter */
-        1,  /* Priority of the task */
-        &xHandle_website,  /* Task handle. */
-        1); /* Core where the task should run */
+  //start the tasks
+  //CORE 1
+  xTaskCreatePinnedToCore(
+                          task_website_send_adquisition_datas, /* Function to implement the task */
+                          "Website_monitoring", /* Name of the task */
+                          5000,  /* Stack size in words */
+                          NULL,  /* Task input parameter */
+                          5,  /* Priority of the task */
+                          &xHandle_website,  /* Task handle. */
+                          1); /* Core where the task should run */
 
-    //CORE 0
-    xTaskCreatePinnedToCore(
-        task_fdir, /* Function to implement the task */
-        "TaskFDIR", /* Name of the task */
-        10000,  /* Stack size in words */
-        NULL,  /* Task input parameter */
-        5,  /* Priority of the task */
-        &xHandle_fdir,  /* Task handle. */
-        0); /* Core where the task should run */
+  xTaskCreatePinnedToCore(
+                          task_website_synch_parameters, /* Function to implement the task */
+                          "Website_monitoring", /* Name of the task */
+                          10000,  /* Stack size in words */
+                          NULL,  /* Task input parameter */
+                          1,  /* Priority of the task */
+                          &xHandle_website,  /* Task handle. */
+                          1); /* Core where the task should run */
 
-    xTaskCreatePinnedToCore(
-        task_event, /* Function to implement the task */
-        "TaskEvent", /* Name of the task */
-        10000,  /* Stack size in words */
-        NULL,  /* Task input parameter */
-        5,  /* Priority of the task */
-        &xHandle_event,  /* Task handle. */
-        0); /* Core where the task should run */
+  //CORE 0
+  xTaskCreatePinnedToCore(
+                          task_fdir, /* Function to implement the task */
+                          "TaskFDIR", /* Name of the task */
+                          10000,  /* Stack size in words */
+                          NULL,  /* Task input parameter */
+                          1,  /* Priority of the task */
+                          &xHandle_fdir,  /* Task handle. */
+                          0); /* Core where the task should run */
 
-    xTaskCreatePinnedToCore(
-        task_read_sensors, /* Function to implement the task */
-        "TaskSensor", /* Name of the task */
-        10000,  /* Stack size in words */
-        NULL,  /* Task input parameter */
-        1,  /* Priority of the task */
-        &xHandle_read_sensor,  /* Task handle. */
-        0); /* Core where the task should run */
+  xTaskCreatePinnedToCore(
+                          task_event, /* Function to implement the task */
+                          "TaskEvent", /* Name of the task */
+                          10000,  /* Stack size in words */
+                          NULL,  /* Task input parameter */
+                          1,  /* Priority of the task */
+                          &xHandle_event,  /* Task handle. */
+                          0); /* Core where the task should run */
+
+  xTaskCreatePinnedToCore(
+                          task_read_sensors, /* Function to implement the task */
+                          "TaskSensor", /* Name of the task */
+                          10000,  /* Stack size in words */
+                          NULL,  /* Task input parameter */
+                          1,  /* Priority of the task */
+                          &xHandle_read_sensor,  /* Task handle. */
+                          0); /* Core where the task should run */
 
 }

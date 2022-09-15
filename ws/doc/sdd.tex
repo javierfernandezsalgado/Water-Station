@@ -1,0 +1,112 @@
+\section{Introduction}
+
+The system are divided for 2 main elements. On site device \bf{WATER-STATION} which is a embedded system and; a remote server \bf{WATER-MONITOR} which it is a cloud server.
+
+\bf{WATER-STATION}  are composed of a  ESP32 system\cite{},a  PH sensor\cite{}, a PPM sensor\cite{} and a temperature sensor \cite{}. In addition the power system has been design in a automous manner with e solar array and the a battery. Software has been developed with the ESP-IF framework which is part of the ESP effort. The language selected compliance with C99 \cite{}.
+
+\bf{WATER-MOnITOR} is a Django \cite{} web app which has been deployed in the ASW service \cite{}. In addition has been used the framework \cite{} to monitor the historical datas.
+
+The development process has been done using a V life cycle. A set of requirements has been set up \cite{} and the validation has been performed via testing.
+
+\section{Software static architecture}
+\subsection{WARTER-STATION}
+Software is composed of different modules:
+- driver: drivers contains the code to manage: ppm, PH and temperature.
+- Nominal mode: contains the full functionality in Nominal mode
+- Parameters: contains the full functionality to keep and update parameters and adquision values.
+- Configuration mode: contains the functionality of the configuration mode.
+
+\subsubsection{driver}
+The drivers module provided software interface to the devices. The values retrieve is a normalized values in the expected units of each sensor. The temperature is provided in Celsius; the ppm is provided by :  and the PH is provided by: The values retrieved are calibrated with their respective calibration values (see section parameteres).
+
+\subsubsection{Nominal mode}
+Nominal mode is in charge of deifferent funcitonalities which are listed below.
+- Event functionality: Checks the event rules and execute the confugred action.
+- FDIR functionality: check the FDIR rules and execute the cinfugyred action. the system can be power down or rebooted.
+- Sending Adquisiton datas to \bf{WATER-MONITOR}
+- Sychrnonized confiugurable parameters with \bf{WATER-MONITOR}.If there are new parameters in the server all parameters are retrieved and updated in the software.
+- Retrieve the sensor values and keeping in memory. All sensor values are kept in the volatile memory. Values are sent to the  \bf{WATER-MONITOR} in order to display.
+\subsubsection{Parameter}
+Parameter mode is in charge of the keeping all values with must be kept in non-volatile memory or datas which are shared between components. Configurable parameters are deply in internal Flash memory of the ESP-32. Adquisiton values are deployed in RAM memory unsing a ring buffer.
+Component provided diferent banks to have the information togther by categories. The categories are:
+- Calibration
+- Events PPM
+- Events PH
+- Events temperature
+- FDIR POWER
+- FDIR WIFI
+- WIFI
+
+The values are stored using CRC values which always are checked to verified that there are corrected. In case that the devide detected configurable datas corruption. The system must retrieve again the values and update in flash memory. threre is not action envisage in case that the Flash memory segemnt is affected.
+
+configurable parameters and adquistion are used for software with a RAM memory copy. RAM memory copy are protected as well by CRC mechanism.
+
+\subsubsection{Configuration mode}
+Configuration implements all functionality linked to the first configuraiton of the \bf{WATER-STATION}. It implements a webservice with wifi registration service. When it is access to the wifi provided by \bf{WATER-STATION} the SSIS and Passwrod the wifi which will be used to connect to internenet.  
+
+
+
+
+
+
+
+
+
+
+\section {Software dynamic architecture}
+\subsection{WATER-STATION}
+The Dynamic behavious changes depeding of the mode what is executed the software.
+
+Configuration model. system implement a WIFI service with a webserver to provided a mechanism to configure the SSID and PASWORD of a wifi network with internet. when it is submited both datas parameter module update the system status to nominal mode and reboot after configured the seconds. See parameter set up.
+
+Nomonal model use a multi thread in a multi core system and take adventage of the dual core system. in the below table shows the core assignation.
+
+|CORE 0| FDIR, Event and sensor adquisition|
+| Core 1| REST_/API interface threads|
+
+
+CORE 0 contains 3 threads which are configure using deadline monotonic priprity assgiment and fixed priority prevemtive sheduler. task_/FDIR is in charge to check the FDIR rules and executed. the period of the task is 1000 miliseconds. Thread event, is in charge to check the event rule and execute the activated rules. The period is 1000 milliseconds. The read sesonrs are in charge to read every second the sensors. WCET time for event and FDIR are when all rules are activated at the same time.
+CORE 1 contain 2 thread. Parameter sychnronization thread which  is in  charge to execute the synchornization of the paremeters between the \bf{WATER-STATION} and \bf{WATER-MONITOR}. This parameters is executed every seconds. It checks the dates of the parameter DB in the flash and the parameter date in the DB of the \bf{WATER-MONITOR} in case that the date of the \bf{WATER-MONITOR} is more recent, then it retrieves all the DB and copy to FLAHS MEMORY. the other thread is termed as send adquistion parameters. This parameters is in charge to send the datas to the \bf{WATER-MONITO}. In case that there is not connection the values are kept in the transmision rign buffer. The task send the full transmission buffer every 5 seconds. when the buffer which has a static capacity for 10 minutes is full. The oldest datas are overwritten for new ones.
+
+
+
+\section {CPU and Memory budget}
+
+\subsection {WATER-STATION}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+two threads which are in charge with the \bf{WATER-MONITOR} synchronization.
+
+
+
+
+
+
+ 
+\section {Real time constraints}
