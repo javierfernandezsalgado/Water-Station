@@ -7,9 +7,9 @@
 #include "ds18b20.h" //Include library
 #include "parameters.h"
 #include <stdbool.h>
-
-
-
+#include "esp_log.h"
+#include "driver/gpio.h"
+#define TAG "TEMPERATURE"
 DeviceAddress tempSensor;
 
 
@@ -27,9 +27,11 @@ extern float getTemperature(void) {
 
 
 extern void temperature_setup(void)
-{
-    ds18b20_init(((temp_configuration *)get_parameter(TEMPERATURE))->pin);
+{//((temp_configuration *)get_parameter(TEMPERATURE))->pin
+    ds18b20_init(GPIO_NUM_13);
+
     search(tempSensor,false);
+    ESP_LOGI(TAG,"The ID of the temperature sensor are %c.",*tempSensor);
     ds18b20_setResolution(&tempSensor,1,10);
 
 }

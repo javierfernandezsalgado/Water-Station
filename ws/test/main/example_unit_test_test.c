@@ -41,6 +41,12 @@ void app_main(void)
     unity_run_tests_by_tag("[event]", false);
     UNITY_END();
 
+
+    print_banner("Running tests with [drivers] tag");
+    UNITY_BEGIN();
+    unity_run_tests_by_tag("[drivers]", false);
+    UNITY_END();
+
     /* print_banner("Running tests without [acq] tag"); */
     /* UNITY_BEGIN(); */
     /* unity_run_tests_by_tag("[fails]", true); */

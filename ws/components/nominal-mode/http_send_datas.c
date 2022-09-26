@@ -18,6 +18,9 @@
 #define ESP_MAXIMUM_RETRY 20u
 #define WEBSITE_URL "http://httpbin.org/post"
 
+/*TODO it could be a limitation of the connection of different type of networks.*/
+#define ESP_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WPA_PSK
+
 
 static esp_err_t _http_event_handler(esp_http_client_event_t *evt);
 char local_response_buffer[2048] = {0};
@@ -31,27 +34,15 @@ esp_http_client_config_t config_website = {
 };
 
 
-esp_http_client_handle_t client ;
-
-/*TODO it could be a limitation of the connection of different type of networks.*/
-#define ESP_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WPA_PSK
-
-
-
+static esp_http_client_handle_t client ;
 static EventGroupHandle_t s_wifi_event_group;
-
 static int s_retry_num = 0;
 /* Number of user connected to the website. */
 static uint32_t user_connections=0u;
 
-
-
 static void wifi_event_handler(void* arg, esp_event_base_t event_base,
                                int32_t event_id, void* event_data);
-
 static void wifi_init_station_mode(void);
-
-
 
 static void http_send_values(void);
 
@@ -156,9 +147,11 @@ static void http_send_values(void)
         ESP_LOGI(TAG, "HTTP POST Status = %d, content_length = %lld",
                  esp_http_client_get_status_code(client),
                  esp_http_client_get_content_length(client));
-    } else {
-                   ESP_LOGE(TAG, "HTTP POST request failed: %s", esp_err_to_name(err));
-               }
+    }
+    else
+    {
+        ESP_LOGE(TAG, "HTTP POST request failed: %s", esp_err_to_name(err));
+    }
 }
 
 

@@ -253,4 +253,5 @@ extern void   reset_factory(void);
 extern void * get_adquisition(aquisition_enum acq_type);
 extern void   set_aquition(void * data,aquisition_enum acq_type);
 extern void   reset_adquistion(void);
+extern void set_factory(void * factory_memory);
 #endif
