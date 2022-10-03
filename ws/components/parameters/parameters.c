@@ -31,6 +31,190 @@ static const char* TAG = "Parameter Module";
 SemaphoreHandle_t mutex_acq;
 
 
+static void load_init_factory_values()
+{
+    ESP_LOGI(TAG, "Preload parameter");
+
+
+    ESP_LOGI(TAG, "Factory load");
+    parameters[FACTORY_CONFIGURATION]= (global_configuration)
+        {
+
+
+          .calibration=
+          {
+            .ph=1.0,
+            .temp=1.0,
+            .ppm=1.0,
+
+          },
+            .is_configure_before=true,
+            .sm=CONFIGURATION,
+            .setup_delay=500u,
+            .wifi_parameters={
+                .http_port=80,
+                .ssid_configuration="Fishery-station-1",
+                .ssid_passwd_configuration="",
+                .max_connection_configuration=3u,
+                .wifi_channel_configuration=1u,
+                .ssid_nominal="",
+                .ssid_passwd_nominal="",
+                .ip_address_configuration={192,168,1,1},
+            },
+            .ph_parameters =
+            {
+                .pin=0u,
+            },
+            .gns_parameters =
+            {
+                .pin=0u,
+            },
+            .power_parameters =
+            {
+                .pin=0u,
+            },
+            .temp_parameters =
+            {
+                .pin =4u,
+            },
+            .fdir_parameters =
+            {
+                .power_fdir=
+                {
+                    .power_max={
+                        .type_action=INFO,
+                        .action=&poweroff,
+                        .value=4.0f,
+                        .eval=lt,
+                        .operator=LT,
+                    },
+                    .power_min=
+                    {
+                        .type_action=INFO,
+                        .action=&poweroff,
+                        .value=4.0f,
+                        .eval=gt,
+                        .operator=GT,
+                    },
+                },
+                .wifi_fdir =
+                {
+                    .no_connection=
+                    {
+                        .type_action=INFO,
+                        .action=NULL,
+                        .value=true,
+                        .eval=gt,
+                        .operator=GT,
+                        .period=0u,
+                        .isActived=false,
+                    },
+                    .poor_connection =
+                    {
+                        .type_action=INFO,
+                        .action=NULL,
+                        .value=20u,
+                        .eval=gt,
+                        .operator=GT,
+                        .period=0u,
+                        .isActived=false,
+                    },
+                    .too_many_connections=
+                    {
+                        .type_action=INFO,
+                        .action=NULL,
+                        .value=10u,
+                        .eval=gt,
+                        .operator=GT,
+                        .period=0u,
+                        .isActived=false,
+                    },
+                },
+
+            },
+            .event_parameters=
+            {
+                .temp_event=
+                {
+                    .max_temp=
+                    {
+                        .type_action=INFO,
+                        .action=NULL,
+                        .value=25u,
+                        .eval=gt,
+                        .operator=GT,
+                        .period=60u,
+                        .isActived=true,
+
+                    },
+                    .min_temp=
+                    {
+                        .type_action=INFO,
+                        .action=NULL,
+                        .value=5u,
+                        .eval=lt,
+                        .operator=LT,
+                        .period=60u,
+                        .isActived=true,
+
+                    },
+                },
+                .ph_event=
+                {
+                    .max_ph=
+                    {
+                        .type_action=INFO,
+                        .action=NULL,
+                        .value=8u,
+                        .eval=gt,
+                        .operator=GT,
+                        .period=60u,
+                        .isActived=false,
+
+                    },
+                    .min_ph=
+                    {
+                        .type_action=INFO,
+                        .action=NULL,
+                        .value=3u,
+                        .eval=lt,
+                        .operator=LT,
+                        .period=60u,
+                        .isActived=true,
+                    },
+                },
+                .ppm_event=
+                {
+                    .max_ppm=
+                    {
+                        .type_action=INFO,
+                        .action=NULL,
+                        .value=8u,
+                        .eval=gt,
+                        .operator=GT,
+                        .period=60u,
+                        .isActived=false,
+
+                    },
+                    .min_ppm=
+                    {
+                        .type_action=INFO,
+                        .action=NULL,
+                        .value=3u,
+                        .eval=lt,
+                        .operator=LT,
+                        .period=60u,
+                        .isActived=true,
+                    },
+                },
+            },
+        };
+    ESP_LOGI(TAG,"Copying a total of %d bytes from factory parameters to user configuration parameters ",sizeof(parameters[FACTORY_CONFIGURATION]));
+
+    memcpy( &parameters[USER_CONFIGURATION],&parameters[FACTORY_CONFIGURATION],sizeof(global_configuration));
+
+}
+
 
 
 
@@ -61,9 +245,9 @@ extern void initialization()
     if (err == ESP_ERR_NVS_NOT_FOUND)
     {
 
-        /* load_init_factory_values(); */
-        /* err = nvs_set_blob(nvs_handle_parameter, "parameters", parameters, sizeof(global_configuration)*2); */
-        /* err = nvs_set_i32(nvs_handle_parameter, "init_flash", init_flash); */
+        load_init_factory_values();
+         err = nvs_set_blob(nvs_handle_parameter, "parameters", parameters, sizeof(global_configuration)*2);
+         err = nvs_set_i32(nvs_handle_parameter, "init_flash", init_flash);
         /*Non flash values*/
 
         ESP_LOGI(TAG, "WARNING: There are not flash values loaded!!!!");
@@ -77,13 +261,14 @@ extern void initialization()
 
         if(required_size!=sizeof(global_configuration)*2)
         {
-            assert(false);
+          ESP_LOGI(TAG,"A different of  %d, %d",required_size,sizeof(global_configuration)*2);
+          //assert(false);
             //It must be updated the flash values / rese
-            /* ESP_LOGI(TAG,"Reseting the user values in flash memory "); */
-            /* load_init_factory_values(); */
-            /* err = nvs_set_blob(nvs_handle_parameter, "parameters", parameters, sizeof(global_configuration)*2); */
+             ESP_LOGI(TAG,"Reseting the user values in flash memory ");
+             load_init_factory_values();
+             err = nvs_set_blob(nvs_handle_parameter, "parameters", parameters, sizeof(global_configuration)*2);
 
-            /* err = nvs_set_i32(nvs_handle_parameter, "init_flash", init_flash); */
+            err = nvs_set_i32(nvs_handle_parameter, "init_flash", init_flash);
 
         }
         //vTaskDelay(2000/ portTICK_PERIOD_MS);
@@ -193,7 +378,7 @@ extern void * get_parameter(parameter_bank banck)
     }
     case CALIBRATION:
       {
-        return (void *) &parameters[select_banck].event_parameters.calibration;
+        return (void *) &parameters[select_banck].calibration;
       }
     default:
     {
@@ -396,11 +581,11 @@ extern void set_factory(void * factory_memory)
     int32_t init_flash=1;
     esp_err_t err;
 
-    assert(factory_memory==NULL);
+    assert(factory_memory!=NULL);
     memcpy(parameters,factory_memory,sizeof(global_configuration)*2);
-
+    ESP_LOGI(TAG,"Copying a total of %d bytes from flash memory to RAM ",sizeof(global_configuration)*2);
     err = nvs_set_blob(nvs_handle_parameter, "parameters", parameters, sizeof(global_configuration)*2);
     err = nvs_set_i32(nvs_handle_parameter, "init_flash", init_flash);
-    assert(err==ESP_OK);
+    assert(err!=ESP_OK);
 
 }

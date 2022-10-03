@@ -1,20 +1,14 @@
 #include <stdio.h>
 #include "parameters.h"
 #include "esp_log.h"
-#include "configuration-mode.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_log.h"
-#include "nominal-mode.h"
-#include "temperature.h"
-#include "ph.h"
-#include "clean_water.h"
-#include "internal_temperature.h"
 #include <string.h>
 
 static const char* TAG = "FLASH PARAMETERS";
 
-static global_configuration parameters[2u];
+global_configuration parameters[2u];
 
 static void load_init_factory_values()
 {
@@ -201,4 +195,9 @@ void app_main(void)
     set_factory((void *)parameters);
 
     ESP_LOGI(TAG,"Flash done");
+    while (true)
+      {
+        ESP_LOGI(TAG,"Flash done!");
+        vTaskDelay(5000 / portTICK_PERIOD_MS);
+      }
 }

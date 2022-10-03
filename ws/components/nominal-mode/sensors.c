@@ -44,8 +44,8 @@ extern void task_read_sensors(void * pvParameters)
 
         ESP_LOGI(TAG,"Reading internal temp");
         float internal_temp=0.0f;
-        internal_temp=internal_temperature_get();
-        set_aquition((void *)&internal_temp,INTERNAL_TEMP_ACQ);
+        /* internal_temp=internal_temperature_get(); */
+        /* set_aquition((void *)&internal_temp,INTERNAL_TEMP_ACQ); */
 
         //TODO the WIFI connection DB, the quality of the signal
 

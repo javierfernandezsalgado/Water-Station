@@ -38,7 +38,7 @@ extern void  nominal_mode(void)
   //start the tasks
   //CORE 1
   xTaskCreatePinnedToCore(
-                          task_website_send_adquisition_datas, /* Function to implement the task */
+                          task_website_synch_parameters, /* Function to implement the task */
                           "Website_monitoring", /* Name of the task */
                           5000,  /* Stack size in words */
                           NULL,  /* Task input parameter */

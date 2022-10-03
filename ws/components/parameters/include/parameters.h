@@ -198,6 +198,11 @@ typedef struct
 } event_configuration;
 
 
+typedef struct{
+  float ph;
+  float temp;
+  float ppm;
+} calibration_datas;
 
 
 typedef struct
@@ -226,11 +231,6 @@ typedef struct
 
 
 
-typedef struct{
-  float ph;
-  float temp;
-  float ppm;
-} calibration_datas;
 
 
 

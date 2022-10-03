@@ -162,7 +162,7 @@ extern void task_website_synch_parameters(void * pvParameters)
   while (true)
     {
       //TODO if  check values
-
+      vTaskDelay(5000 / portTICK_PERIOD_MS);
       //TODO get datas and apply modificaton
       //TODO force a reboot?
 
