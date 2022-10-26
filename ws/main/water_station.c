@@ -10,6 +10,7 @@
 #include "ph.h"
 #include "clean_water.h"
 #include "internal_temperature.h"
+#include "reset.h"
 
 static const char* TAG = "Main module";
 
@@ -31,7 +32,10 @@ static void driver_initilization()
     ESP_LOGI(TAG,"Internal temperature set up ");
     internal_temperature_set_up();
 
+    ESP_LOGI(TAG,"Reset button set up ");
+    reset_set_up();
 
+    
     ESP_LOGI(TAG,"Setup finish ");
 
 }

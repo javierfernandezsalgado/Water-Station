@@ -1,5 +1,6 @@
+
 SHELL := /bin/bash
-ESP-IDF:=/opt/eps-idf/esp-idf
+ESP-IDF:=/opt/esp32/esp-idf
 
 build: FORCE
 	-source $(ESP-IDF)/export.sh && idf.py build

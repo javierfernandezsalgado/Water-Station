@@ -18,6 +18,8 @@
 #define ESP_MAXIMUM_RETRY 20u
 #define WEBSITE_URL "http://httpbin.org/post"
 
+#define WEBSITE_URL_GET_VERSION_PARAMETER "http://httpbin.org/post"
+
 /*TODO it could be a limitation of the connection of different type of networks.*/
 #define ESP_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WPA_PSK
 
@@ -45,6 +47,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 static void wifi_init_station_mode(void);
 
 static void http_send_values(void);
+static esp_err_t retrieve_version_from_server(uint32_t * version);
 
 
 esp_err_t _http_event_handler(esp_http_client_event_t *evt)
@@ -154,18 +157,143 @@ static void http_send_values(void)
     }
 }
 
+static esp_err_t retrieve_version_from_server(uint32_t * version)
+{
 
+  uint8_t output_buffer[2048] = {0};   // Buffer to store response of http request
+  int32_t  content_length;
+  esp_http_client_config_t config = {
+        .url = "http://httpbin.org/get_parameter_version",
+    };
+  esp_http_client_handle_t client = esp_http_client_init(&config);
+
+    // GET Request
+  esp_http_client_set_method(client, HTTP_METHOD_GET);
+  esp_err_t err = esp_http_client_open(client, 0);
+  if (err != ESP_OK)
+    {
+      ESP_LOGE(TAG, "Failed to open HTTP connection: %s", esp_err_to_name(err));
+    }
+  else
+    {
+      content_length = esp_http_client_fetch_headers(client);
+      if (content_length < 0)
+        {
+          ESP_LOGE(TAG, "HTTP client fetch headers failed");
+        }
+      else
+        {
+          uint32_t len_datas = esp_http_client_read_response(client, ( char *) output_buffer, 2048);
+          if (len_datas > 0)
+            {
+              memcpy(version,output_buffer,sizeof(uint8_t)*4);
+              ESP_LOGI(TAG, "HTTP GET Status = %d, content_length = %lld",
+                       esp_http_client_get_status_code(client),
+                       esp_http_client_get_content_length(client));
+              ESP_LOG_BUFFER_HEX(TAG, output_buffer, len_datas);
+            }
+          else
+            {
+              err=ESP_ERR_INVALID_RESPONSE;
+              ESP_LOGE(TAG, "Failed to read response");
+            }
+        }
+    }
+    esp_http_client_close(client);
+
+  return err;
+}
+static bool retrieve_parameter_from_server(global_configuration * parameters)
+{
+  //server connect
+  assert(parameters !=NULL);
+
+
+  int32_t content_length;
+
+  esp_http_client_config_t config = {
+        .url = "http://httpbin.org/get_parameters",
+    };
+  esp_http_client_handle_t client = esp_http_client_init(&config);
+
+    // GET Request
+  esp_http_client_set_method(client, HTTP_METHOD_GET);
+  esp_err_t err = esp_http_client_open(client, 0);
+  if (err != ESP_OK)
+    {
+      ESP_LOGE(TAG, "Failed to open HTTP connection: %s", esp_err_to_name(err));
+    }
+  else
+    {
+      content_length = esp_http_client_fetch_headers(client);
+      if (content_length < 0)
+        {
+          ESP_LOGE(TAG, "HTTP client fetch headers failed");
+        }
+      else
+        {
+          uint32_t len_datas = esp_http_client_read_response(client, (char *) parameters, sizeof(global_configuration));
+          if (len_datas > 0)
+            {
+
+
+              ESP_LOGI(TAG, "HTTP GET Status = %d, content_length = %lld",
+                       esp_http_client_get_status_code(client),
+                       esp_http_client_get_content_length(client));
+              ESP_LOG_BUFFER_HEX(TAG, parameters, len_datas);
+            }
+          else
+            {
+              err=ESP_ERR_INVALID_RESPONSE;
+              ESP_LOGE(TAG, "Failed to read response");
+            }
+        }
+    }
+    esp_http_client_close(client);
+
+  return err;
+
+}
 extern void task_website_synch_parameters(void * pvParameters)
 {
-  //TODO check if there are new parameters in the server, and then synchronized.
-  //TODO it checks the time when the parameters in the server was synchronized.
+
+
+  uint32_t version_device=0u;
+  uint32_t version_web = 0u;
+  global_configuration global_configuration_server;
+  esp_err_t err;
   while (true)
     {
-      //TODO if  check values
-      vTaskDelay(5000 / portTICK_PERIOD_MS);
-      //TODO get datas and apply modificaton
-      //TODO force a reboot?
 
+      //Get version of the parameters
+      version_device = (uint32_t)((global_configuration * )get_parameter(GLOBAL))->version;
+      err=retrieve_version_from_server(&version_web);
+      if (err!=ESP_OK)
+        {
+          //TODO notify error 
+        }
+      else
+        {
+          if (version_device<version_web)
+            {
+              err = retrieve_parameter_from_server(&global_configuration_server);
+              if (err!=ESP_OK)
+                {
+                  //Notify Error
+                }
+              else
+                {
+                  set_parameter(GLOBAL,&global_configuration_server);
+                }
+            }
+          else
+            {
+              //Nothing 
+            }
+        }
+      //
+
+      vTaskDelay(5000 / portTICK_PERIOD_MS);
     }
 }
 

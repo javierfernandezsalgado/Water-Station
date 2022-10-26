@@ -31,7 +31,7 @@ static const char* TAG = "Parameter Module";
 SemaphoreHandle_t mutex_acq;
 
 
-static void load_init_factory_values()
+extern void load_init_factory_values()
 {
     ESP_LOGI(TAG, "Preload parameter");
 

@@ -15,6 +15,7 @@ extern void poweroff(const uint8_t * message);
 extern void info(const uint8_t * message);
 extern void reset(const uint8_t * message);
 extern void none_action(const uint8_t * message);
+extern void load_init_factory_values();
 
 
 /*List of configuration parameters*/
@@ -223,6 +224,7 @@ typedef struct
   temp_configuration   temp_parameters;
   uint16_t crc;
   calibration_datas calibration;
+  uint32_t version;
   }global_configuration;
 
 
